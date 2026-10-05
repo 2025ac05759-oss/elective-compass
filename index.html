@@ -401,9 +401,9 @@ footer{padding-block:28px 40px; color:var(--ink-3); font-size:.85rem; border-top
           </div>
         </div>
         <div class="sentence" id="q3">
-          <label class="lead" for="persona-input"><span class="qn"></span>Right now I'm a</label>
+          <label class="lead" for="persona-input"><span class="qn"></span>Current role or domain</label>
           <div class="combo" id="persona-combo">
-            <input id="persona-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="persona-list" placeholder="your current job: Salesforce, QA, power sector…">
+            <input id="persona-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="persona-list" placeholder="your role or domain: Salesforce, QA, healthcare, power sector…">
             <div class="c-btns"><button type="button" class="c-clear" aria-label="Clear current role" hidden>✕</button><button type="button" class="c-open" aria-label="Show all backgrounds">▾</button></div>
             <ul id="persona-list" role="listbox" aria-label="Backgrounds" hidden></ul>
           </div>
@@ -1264,6 +1264,32 @@ SUBSKILLS.graph = {tech:["Graph neural networks (GCN, GraphSAGE, GAT)","Network 
     if (ev && ev.pct.graph){ ev.pct.kg = ev.pct.graph; delete ev.pct.graph; } });
 })();
 
+/* ===================== v28: domain options built from how AI is used in each field (Oct 2026) =====================
+   A domain's skill profile is the weighted sum of its main AI use cases (weight 3 = most common), scaled to 0-3, instead of
+   traits of the field (e.g. regulation). "planAs" settles near ties between roles (approved by Ankur): healthcare AI is mostly
+   imaging and clinical text (Multimodal AI Engineer), manufacturing AI mostly predictive maintenance and inspection (Industrial
+   AI Engineer), IT-operations AI mostly anomaly detection, LLM assistants and production ML (Machine Learning Engineer). */
+var DOMAIN_USES = {
+ health:[["Medical imaging diagnosis (radiology, pathology)",3,{vision:3,dl:1.5}],["Clinical documentation and GenAI assistants",3,{llm:3,nlp:2}],["Drug discovery: molecule property prediction and design",2,{graph:3,dl:2}],["Clinical-trial and real-world-evidence analytics",2,{prob:2,classic:2,data:1.5}],["Patient risk prediction",2,{classic:3,data:1}],["Privacy, safety and explainability for regulators",1,{trust:3}]],
+ finance:[["Fraud and anti-money-laundering detection",3,{classic:3,graph:2,sec:1}],["Credit-risk scoring with explanations",3,{classic:3,prob:1.5,trust:2}],["GenAI for documents, KYC and advisor copilots",2,{llm:3,nlp:2}],["Forecasting and trading signals",2,{signal:2.5,prob:2}],["Customer analytics, churn and cross-sell",1,{biz:3,classic:1}]],
+ marketing:[["Recommendations and personalisation",3,{search:3,classic:1}],["Customer segmentation, churn and lifetime value",3,{biz:3,classic:2}],["GenAI content and campaign copy",2,{llm:3}],["Sentiment and social listening",2,{nlp:2.5,biz:1}],["Demand forecasting and pricing",1,{signal:2,prob:1.5}]],
+ manuf:[["Predictive maintenance from sensor data",3,{signal:3,classic:1.5}],["Visual quality inspection",2,{vision:3,dl:1}],["Edge deployment on the shop floor",2,{edge:3,ops:1}],["Process optimisation and digital twins",1,{prob:2,classic:1.5}],["Robotics and automation",1,{robot:3}]],
+ telecom:[["Network anomaly and fault detection",3,{signal:2.5,classic:2}],["Traffic forecasting and capacity planning",2,{signal:3,prob:1}],["Network optimisation (RAN, routing)",2,{graph:2.5,sys:1.5}],["Customer churn and care chatbots",2,{biz:1.5,llm:2,classic:1.5}],["AI at the 5G edge",1,{edge:3}]],
+ govadmin:[["Citizen-service chatbots and multilingual assistants",3,{llm:3,nlp:2.5}],["Document and form processing (OCR, extraction)",2,{nlp:2.5,vision:1.5}],["Fraud and leakage detection in schemes",2,{classic:2.5,data:1.5}],["Policy analytics and dashboards",1,{data:2,biz:1.5}],["Responsible, auditable AI",2,{trust:3}]],
+ itops:[["Log and metric anomaly detection",3,{signal:2,classic:2}],["Incident triage and IT assistants with LLMs",3,{llm:3,nlp:1.5}],["Automation and ML in production",2,{ops:3}],["Capacity forecasting",1,{signal:2}]]
+};
+var DOMAIN_PLAN_AS = {health:"mm", manuf:"industrial", itops:"mle"};
+(function(){
+  PERSONAS.forEach(function(p){ var U = DOMAIN_USES[p.id]; if (!U) return; var v = {}, mx = 0;
+    U.forEach(function(u){ for (var k in u[2]) v[k] = (v[k]||0) + u[1]*u[2][k]; });
+    for (var k in v) if (v[k] > mx) mx = v[k];
+    for (k in v) v[k] = Math.round(v[k]/mx*3*2)/2;
+    p.v = v; p.uses = U.map(function(u){ return {name:u[0], w:u[1]}; }); if (DOMAIN_PLAN_AS[p.id]) p.planAs = DOMAIN_PLAN_AS[p.id]; });
+  /* Free-text keywords for the same fields follow the same use cases. */
+  var KW = {healthcare:{vision:1, nlp:1, llm:1, classic:1, graph:0.5, trust:0.5}, finance:{classic:2, prob:1, llm:0.5, graph:0.5, trust:0.5, sec:0.5}, telecom:{signal:2, classic:1, graph:1, sys:0.5}};
+  KEYWORDS.forEach(function(k){ if (KW[k[2]]) k[1] = KW[k[2]]; });
+})();
+
 /* ===================== ENGINE ===================== */
 var DK = Object.keys(DIMS), ND = DK.length;
 var CBY = {}; COURSES.forEach(function(c){ CBY[c.id] = c; });
@@ -1309,7 +1335,8 @@ function buildGoal(st){
   if (st.maths === "high"){ G[iT]+=1; G[iP]+=0.5; }
   for (var i=0;i<ND;i++) G[i] += 0.08;
   /* No target role: plan for the closest role to what the student told us. */
-  var planRole = role || nearestPath(G);
+  /* A field whose AI work sits between two roles has an approved default (planAs, from its main AI use cases). */
+  var planRole = role || (persona && persona.planAs && PATHS.filter(function(p){ return p.id===persona.planAs; })[0]) || nearestPath(G);
   return {G:G, role:role, planRole:planRole, domain:domain, persona:persona, interests:ints, maths:st.maths||"medium", demand: st.demand!=="off",
           iSets: ints.map(function(it){ return it.courses; }), major: planRole.major};
 }
@@ -1389,11 +1416,17 @@ function postingVec(role){ var v = new Float64Array(ND), ev = role && JD_EVIDENC
 function depthOf(v){ return v >= 2 ? Math.min(v,3)/3 : 0.25*v/3; }
 function coverage(ids){ var c = new Float64Array(ND); ids.forEach(function(id){ var v = CBY[id].vec; for (var i=0;i<ND;i++){ var x = depthOf(v[i]); if (x>c[i]) c[i]=x; } }); return c; }
 function postingCover(pv, ids){ var c = coverage(ids), x = 0; for (var i=0;i<ND;i++) x += pv[i]*c[i]; return x; }
+/* With no target role, a field chosen under "I am currently" also counts: its main AI uses (DOMAIN_USES) weigh as much as the
+   closest role's postings, so the job-market slots follow how AI is used in that field (e.g. inspection in manufacturing). */
+function domainVec(goal){ var p = goal && !goal.role && goal.persona && goal.persona.uses ? goal.persona : null, d = new Float64Array(ND);
+  if (!p) return null; DK.forEach(function(k,i){ var x = p.v[k]||0; if (x >= 1) d[i] = x/3; }); return d; }
+function marketVec(goal){ var pv = postingVec(goal.planRole), d = domainVec(goal); if (!d) return pv;
+  var out = new Float64Array(ND); for (var i=0;i<ND;i++) out[i] = 0.5*pv[i] + 0.5*d[i]; return out; }
 /* What a course adds for the role's postings on top of the other courses: the posting skill it adds most. */
-function marketWhy(role, id, others){
-  var pv = postingVec(role), base = coverage(others), v = CBY[id].vec, best = null;
+function marketWhy(role, id, others, goal){
+  var pv = goal ? marketVec(goal) : postingVec(role), dv = goal && domainVec(goal), base = coverage(others), v = CBY[id].vec, best = null;
   var raw = function(i){ var ev = JD_EVIDENCE[role.id]; return ev ? (ev.pct[DK[i]]||0) : Math.round(pv[i]*100); };
-  for (var i=0;i<ND;i++){ if (v[i] < 2) continue; var g = pv[i]*Math.max(0, depthOf(v[i]) - base[i]); if (g>0.0001 && (!best || g>best.g)) best = {a:DK[i], pct:raw(i), g:g, adds:true}; }
+  for (var i=0;i<ND;i++){ if (v[i] < 2) continue; var g = pv[i]*Math.max(0, depthOf(v[i]) - base[i]); if (g>0.0001 && (!best || g>best.g)) best = {a:DK[i], pct:raw(i), g:g, adds:true, field: !!(dv && dv[i] && raw(i) < MKT_MIN_PCT)}; }
   if (!best) for (i=0;i<ND;i++){ if (v[i] < 2 || !pv[i]) continue; if (!best || pv[i] > best.pv) best = {a:DK[i], pct:raw(i), pv:pv[i], g:0, adds:false}; }
   return best;
 }
@@ -1471,12 +1504,12 @@ function planFor(goal, specKey){
   /* A specialisation course counts as role-relevant here only while the specialisation still needs it (the foundation usually
      completes it), so market courses must otherwise be on the role's list or relevant to its postings. */
   var specDone = !spec || qualifies(spec, fixed);
-  var pv0 = postingVec(role);
+  var pv0 = marketVec(goal);
   /* Off the role's list, a course counts only if it teaches in depth (rated 2+) a skill the role's postings ask for: touching a
      skill (e.g. Cyber Security's fraud-detection examples as "classic ML") is not enough. */
   var teachesAsked = function(id){ var v = CBY[id].vec; for (var i=0;i<ND;i++) if (v[i] >= 2 && pv0[i] > 0) return true; return false; };
   var onRole = function(id){ return role.major.indexOf(id)>=0 || (spec && !specDone && spec.courses.indexOf(id)>=0) || (relCache[id] >= FILL_REL_MIN && teachesAsked(id)); };
-  var pv = postingVec(role), best = null, demandOn = goal.demand !== false, lowM = goal.maths === "low";
+  var pv = marketVec(goal), best = null, demandOn = goal.demand !== false, lowM = goal.maths === "low";
   /* Light maths: maths-heavy courses (rated MATHS_HEAVY+: Learning Theory, Quantum ML, PGM) never take a job-market slot
      (unless the bucket rules leave no other way to complete the plan). */
   for (var pass=0; pass<2 && !best; pass++){ var noHeavy = lowM && pass===0;
@@ -1495,14 +1528,14 @@ function planFor(goal, specKey){
   if (!best) return null;
   var plan = {s2:best.s2.slice(), s3:best.s3.slice()}, why = {}, fillers = [];
   var order = keepMk.slice(); best.mk.forEach(function(id){ order.push(id); });
-  order.forEach(function(id){ var others = plan.s2.concat(plan.s3).filter(function(x){ return x!==id; }), w = marketWhy(role, id, others);
+  order.forEach(function(id){ var others = plan.s2.concat(plan.s3).filter(function(x){ return x!==id; }), w = marketWhy(role, id, others, goal);
     if (!onRole(id)) fillers.push(id); why[id] = w; });
   return {plan:plan, found:F, interest:interest, interests:interests, market:keepMk.concat(best.mk).filter(function(id){ return fillers.indexOf(id)<0; }), fillers:fillers, marketWhy:why, role:role, spec:spec, marketVal:best.val};
 }
 
 /* A score for any plan (edited plans, swaps, other roles), on the same three parts: foundation, interest, job market. */
 function makeScorer(goal, opts, P){
-  var role = goal.planRole, spec = opts && opts.spec && SPECS[opts.spec] || null, pv = postingVec(role), F = P.found.map(function(x){ return x.id; });
+  var role = goal.planRole, spec = opts && opts.spec && SPECS[opts.spec] || null, pv = marketVec(goal), F = P.found.map(function(x){ return x.id; });
   var iSets = goal.interests.map(function(it){ return it.courses; }), demandOn = goal.demand !== false, lowM = goal.maths==="low";
   var rel = {}; COURSES.forEach(function(c){ rel[c.id] = relevanceTo(goal, c); });
   function parts(s2, s3){ var ids = s2.concat(s3), p = {foundation:0, interest:0, market:0, demand:0, overlap:0, maths:0};
@@ -1660,7 +1693,7 @@ function persist(){ try { localStorage.setItem("elective-compass-v2", JSON.strin
 /* ---------- reusable combobox ---------- */
 var SPECIAL_ROLES = [
   {id:"unsure", g:"", name:"Not sure yet: suggest roles for me", kw:"unsure not sure undecided dont know don't know help", sub:"We'll suggest roles from your interests and background"},
-  {id:"domain", g:"", name:"An AI specialist in my current field", kw:"domain current field industry same stay", sub:"Uses your current job (next question) as the target"}
+  {id:"domain", g:"", name:"An AI specialist in my current field", kw:"domain current field industry same stay", sub:"Uses your current role or domain (next question) as the target"}
 ];
 function roleItems(){ return [SPECIAL_ROLES[1], SPECIAL_ROLES[0]].concat(PATHS.map(function(p){ return {id:p.id, g:p.g, name:p.name, kw:p.kw, sub:p.suits}; })); }
 function personaItems(){ return PERSONAS.map(function(p){ return {id:p.id, g:p.g, name:p.label, kw:p.kw, sub:"Today: wants to "+p.goal}; }); }
@@ -1763,7 +1796,7 @@ function syncInputs(){
     sg.hidden = false;
     sg.innerHTML = '<span class="muted">'+(state.role==="unsure"?'Roles that fit you best:':'Not sure which role? These fit you best:')+'</span>'+suggestions.map(function(p){ return '<button type="button" class="chip" data-role="'+p.id+'">'+esc(p.name)+'</button>'; }).join("");
   } else if (state.role==="domain" && !state.persona){
-    sg.hidden = false; sg.innerHTML = '<span class="muted">Pick your current job in the next question so we know which field to specialise in.</span>';
+    sg.hidden = false; sg.innerHTML = '<span class="muted">Pick your current role or domain in the next question so we know which field to specialise in.</span>';
   } else { sg.hidden = true; sg.innerHTML = ""; }
 }
 
@@ -1819,6 +1852,7 @@ function slotReason(id){
   }
   if (sl==="market"){
     if (custom && rec.market.indexOf(id)<0) return "on the "+rl.name+" course list";
+    if (w && w.adds && w.field) return "adds "+skl(w.a)+", a main AI use in your field";
     if (w && w.adds) return "adds "+skl(w.a)+", asked for in "+w.pct+"% of postings";
     if (w) return "goes deeper on "+skl(w.a)+" ("+w.pct+"% of postings), which the plan already covers";
     return "on the "+rl.name+" course list";
@@ -1830,13 +1864,16 @@ var SLOT_HEAD = {found:"Foundation", foundint:"Foundation", spec:"Foundation", i
 function story(){
   var g = rec.goal, P = current(), out = [], R = rec.P, rl = g.planRole, ids = P.s2.concat(P.s3), its = g.interests;
   var bold = function(x){ return "<strong>"+esc(x)+"</strong>"; };
-  var head = g.role ? "Target role: "+bold(rl.name) : "No target role yet, so this plan is for the closest role, "+bold(rl.name)+". Pick a role above for a sharper plan";
+  var uses = !g.role && g.persona && g.persona.uses ? g.persona.uses.slice().sort(function(a,b){ return b.w-a.w; }).slice(0,2).map(function(u){ return u.name.charAt(0).toLowerCase()+u.name.slice(1); }) : null;
+  var head = g.role ? "Target role: "+bold(rl.name)
+    : uses ? "Planned for "+bold(rl.name)+": AI in your field is mostly "+esc(joinList(uses))+". Pick a role above for a sharper plan"
+    : "No target role yet, so this plan is for the closest role, "+bold(rl.name)+". Pick a role above for a sharper plan";
   if (its.length) head += " · Interest"+(its.length>1?"s":"")+": "+joinList(its.map(function(x){ return bold(x.label); }));
   if (R.spec) head += " · Specialisation: "+bold(R.spec.label);
   out.push("<p>"+head+".</p>");
   if (custom) out.push('<p class="muted">You\'ve edited this plan. <b>Back to recommended</b> restores ours.</p>');
   var groups = [["Foundation", "what the role is built on, from course content", ["found","foundint","spec"]], [its.length>1 ? "Your interests" : "Your interest", its.length>1 ? "a starter course each" : "a starter course", ["interest"]],
-                ["Job market", "from "+rl.name+" job postings", ["market"]], ["Bucket filler", "", ["filler"]]];
+                ["Job market", "from "+rl.name+" job postings"+(domainVec(g) ? " and how AI is used in your field" : ""), ["market"]], ["Bucket filler", "", ["filler"]]];
   groups.forEach(function(gr){ var cs = ids.filter(function(id){ return gr[2].indexOf(slotOf(id))>=0; }); if (!cs.length) return;
     out.push('<div class="why-group"><h4>'+gr[0]+(gr[1] ? ' <span>'+esc(gr[1])+'</span>' : '')+'</h4><ul>'+cs.map(function(id){ return "<li>"+bold(CBY[id].short)+": "+esc(slotReason(id))+".</li>"; }).join("")+'</ul></div>'); });
   var notes = [];
