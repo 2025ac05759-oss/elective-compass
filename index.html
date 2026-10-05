@@ -410,8 +410,8 @@ footer{padding-block:28px 40px; color:var(--ink-3); font-size:.85rem; border-top
         </div>
         <div class="suggest" id="role-suggest" aria-live="polite" hidden></div>
         <div class="sentence stack">
-          <span class="lead"><span class="qn"></span>Minor interest <span class="hint">optional, pick one. You get a starter course in it; your role keeps its 3 foundation courses.</span></span>
-          <div class="chips" id="interests" role="group" aria-label="Minor interest, pick one"></div>
+          <span class="lead"><span class="qn"></span>Minor interests <span class="hint">optional, pick up to 2. Each gets a starter course; your role keeps its 3 foundation courses, and the job market fills the rest.</span></span>
+          <div class="chips" id="interests" role="group" aria-label="Minor interests, up to two"></div>
           <ul class="int-map" id="int-map" aria-live="polite" hidden></ul>
         </div>
         <div class="ask-foot">
@@ -518,10 +518,10 @@ footer{padding-block:28px 40px; color:var(--ink-3); font-size:.85rem; border-top
           <li><b>How your six electives are chosen.</b> Every plan has three kinds of slot, filled in this order:
             <ol>
               <li><b>3 Foundation courses</b>: what your role is built on, decided by course content alone (not job postings). Each role has three defining skills, for example language &amp; text, LLMs and applied NLP for an NLP Engineer, and each slot goes to the course that teaches its skill in most depth. If you aim for a specialisation, its required courses fill the foundation first and the rest come from its category, closest to your role.</li>
-              <li><b>1 Interest course</b>: a starter in your one minor interest, the best-matching course on its list that fits. If a better one clashes with one of your foundation courses, and another course teaches that foundation course's skill closely enough (rated 2 or more out of 3; 2.5 or more for your first foundation course, the one the role is built on) and shares real content with it (its handout overlaps by 0.5 or more on our overlap scale), that course takes its foundation place and you get the better interest course. A course your specialisation requires is never replaced. Otherwise the foundation stays and you get the next course on the interest's list.</li>
-              <li><b>2 Job-market courses</b> (3 if you pick no interest): the courses that add most of what your role's job postings ask for that the plan doesn't already cover, counting skills asked for in at least a quarter of postings. Courses on your role's list, or clearly relevant to its postings, come first. Hiring demand counts lightly. Only when the bucket rules leave no relevant course does the plan use a bucket filler.</li>
+              <li><b>1–2 Interest courses</b>: a starter course for each interest you pick (up to two), the best-matching course on its list that fits. If a better one clashes with one of your foundation courses, and another course teaches that foundation course's skill closely enough (rated 2 or more out of 3; 2.5 or more for your first foundation course) and shares real content with it, that course takes its foundation place. A course your specialisation requires, or one already covering your other interest, is never replaced.</li>
+              <li><b>Job-market courses</b> (1 with two interests, 2 with one, 3 with none): the courses that add most of what your role's job postings ask for that the plan doesn't already cover, counting skills asked for in at least a quarter of postings. Courses on your role's list, or clearly relevant to its postings, come first. Hiring demand counts lightly. Only when the bucket rules leave no relevant course does the plan use a bucket filler.</li>
             </ol>
-            When slots compete for a bucket, foundation wins, then your interest, then the job market.</li>
+            When slots compete for a bucket, foundation wins, then your interests, then the job market. "Graphs" in job postings counts as knowledge graphs (Neo4j, GraphRAG), kept separate from graph neural networks.</li>
           <li><b>Modern content (1–5)</b> comes from what each handout actually teaches, not when it was written. For example, LLMs for GenAI (mixture-of-experts, RLHF, agents) rates 5; Probabilistic Graphical Models (classical Bayesian networks) rates 1.</li>
           <li><b>Job demand (1–5)</b> is our reading of 2025–26 hiring reports (sources below). It counts only in the job-market slots, and only lightly: relevance to your role's postings comes first. It favours GenAI, agentic AI, MLOps, data and security skills, which grew fastest; robotics and AI-ethics skills are a small share of postings today.</li>
           <li><b>Topic overlap.</b> We compared every pair of handouts. Plans that repeat content (for example Data Mgmt for ML and MLOps both teach pipelines, MLflow and drift) are penalised, so slots go to new material and to your interests.</li>
@@ -1236,6 +1236,27 @@ var KEYWORDS = [
 var ROLE_DEF = {"mle": ["ops", "dl", "llm"], "dle": ["dl", "llm", "sys"], "llme": ["llm", "nlp", "search"], "perf": ["sys", "edge", "llm"], "aidev": ["llm", "apps", "nlp"], "arch": ["arch", "apps", "llm"], "pm": ["llm", "trust", "arch"], "ds": ["prob", "data", "biz"], "dataeng": ["data", "apps", "sys"], "bizds": ["biz", "data", "prob"], "search": ["search", "nlp", "graph"], "mlops": ["ops", "apps", "sys"], "edgeai": ["edge", "sys", "vision"], "cve": ["vision", "vision", "dl"], "nlpe": ["nlp", "llm", "nlp"], "speech": ["audio", "dl", "nlp"], "mm": ["vision", "llm", "@mmir"], "robot": ["robot", "vision", "vision"], "graphml": ["graph", "search", "llm"], "industrial": ["edge", "signal", "ops"], "rai": ["trust", "sec", "llm"], "aisec": ["sec", "trust", "llm"], "research": ["dl", "theory", "prob"], "qml": ["quantum", "theory", "dl"]};
 var ROLE_DEF_TIE = {"cve": ["robot"], "nlpe": ["dl"], "speech": ["nlp"], "llme": ["dl"], "robot": ["robot"], "mm": ["dl"]};
 
+/* ===================== v23: knowledge graphs separated from graph neural networks (Oct 2026) =====================
+   In postings, "graphs" mostly means knowledge graphs (Neo4j, SPARQL, ontologies, GraphRAG), which the Graph Neural Networks
+   course only touches. Knowledge graphs are now their own skill area ("kg"); "graph" means graph ML / GNNs / network analysis.
+   - Courses (from the handouts): NLP has a knowledge-graphs module; NLP Applications teaches Graph RAG; Graph NNs has a
+     knowledge-graph-embeddings module.
+   - Postings: a role's "graphs" share counts as knowledge graphs, except for the Graph ML / Knowledge Graph Engineer, whose
+     postings ask for both. */
+DIMS.kg = {label:"knowledge graphs & GraphRAG", axis:"data"};
+DIMS.graph.label = "graph ML & network analysis";
+SKILL_SHORT.kg = "Knowledge graphs"; SKILL_SHORT.graph = "Graph ML";
+SUBSKILLS.kg = {tech:["Knowledge graphs and ontologies","Entity resolution","GraphRAG"], tools:["Neo4j / Cypher","SPARQL / RDF","Amazon Neptune"]};
+SUBSKILLS.graph = {tech:["Graph neural networks (GCN, GraphSAGE, GAT)","Network analysis","Link prediction and graph embeddings"], tools:["PyTorch Geometric / DGL","NetworkX"]};
+(function(){
+  var KG = {nlp:1, nlpapps:1.5, gnn:1.5};
+  COURSES.forEach(function(c){ if (KG[c.id]) c.v.kg = KG[c.id]; if (c.id==="nlp") delete c.v.graph; });
+  PATHS.forEach(function(p){ var ev = JD_EVIDENCE[p.id];
+    if (p.id==="graphml"){ p.v.kg = p.v.graph; if (ev) ev.pct.kg = ev.pct.graph; return; }
+    if (p.v.graph){ p.v.kg = p.v.graph; delete p.v.graph; }
+    if (ev && ev.pct.graph){ ev.pct.kg = ev.pct.graph; delete ev.pct.graph; } });
+})();
+
 /* ===================== ENGINE ===================== */
 var DK = Object.keys(DIMS), ND = DK.length;
 var CBY = {}; COURSES.forEach(function(c){ CBY[c.id] = c; });
@@ -1264,7 +1285,7 @@ var IBY = {}; INTERESTS.forEach(function(p){ IBY[p.id]=p; });
       plan does not already cover; job demand counts too when switched on; less overlap preferred.
    Bucket clashes: foundation, then interest, then market.
    ===================================================================================================== */
-var MAX_MINORS = 1, CLOSE_MIN = 2, CLOSE_MIN_FIRST = 2.5, CLOSE_OVL = 0.5, MATHS_HEAVY = 2.5, BLOCK_OVL = 0.9, MKT_DEMAND_W = 0.04, MKT_OVL_W = 0.3, MKT_MATHS_W = 0.08, FILL_GAIN_MIN = 0.05;
+var MAX_MINORS = 2, CLOSE_MIN = 2, CLOSE_MIN_FIRST = 2.5, CLOSE_OVL = 0.5, MATHS_HEAVY = 2.5, BLOCK_OVL = 0.9, MKT_DEMAND_W = 0.04, MKT_OVL_W = 0.3, MKT_MATHS_W = 0.08, FILL_GAIN_MIN = 0.05;
 var DEMAND_W = 0.5, FILL_REL_MIN = 0.5;
 
 /* Build the goal vector from the student's answers (used for the radar, "closest role" and role suggestions). */
@@ -1275,7 +1296,7 @@ function buildGoal(st){
   if (role){ addInto(G, scaleTo(role.vec,3)); any = true; }
   if (persona){ addInto(G, scaleTo(toVec(persona.v),3), role ? 0.25 : (st.role === "unsure" ? 0.6 : 1)); any = true; }
   var ints = (st.interests||[]).map(function(id){ return IBY[id]; }).filter(Boolean).slice(0,MAX_MINORS);
-  ints.forEach(function(it){ addInto(G, scaleTo(toVec(it.v),3), role || persona ? 0.45 : 1); any = true; });
+  ints.forEach(function(it, i){ addInto(G, scaleTo(toVec(it.v),3), role || persona ? (ints.length>1 ? 0.4 : 0.45) : (i===0 ? 1 : 0.75)); any = true; });
   if (!any) return null;
   var iT = DK.indexOf("theory"), iP = DK.indexOf("prob");
   if (st.maths === "high"){ G[iT]+=1; G[iP]+=0.5; }
@@ -1315,6 +1336,7 @@ var SYN = {}; SYNERGY.forEach(function(s){ SYN[s[0]+">"+s[1]] = {w:s[2], why:s[3
 function foundFeasible(pick, id){ var c = CBY[id]; if (pick.indexOf(id)>=0) return false;
   for (var j=0;j<pick.length;j++){ var p = CBY[pick[j]]; if (p.sem===c.sem && p.bucket===c.bucket) return false; var o = OVL[pick[j]+"|"+id]; if (o && o.w >= BLOCK_OVL) return false; }
   if (c.sem===2 && pick.filter(function(p){ return CBY[p].sem===2; }).length >= 2) return false;
+  if (c.sem===3 && pick.filter(function(p){ return CBY[p].sem===3; }).length >= 4) return false;
   return true; }
 /* Returns [{id, skill, why}] in slot order. why: "skill" (teaches the defining skill), "pin", "spec" (required by the
    specialisation), "fill" (closest remaining course to the role's defining skills). */
@@ -1365,12 +1387,14 @@ function marketWhy(role, id, others){
 function planFor(goal, specKey){
   var role = goal.planRole, F = foundation(role.id, specKey), fids = function(){ return F.map(function(x){ return x.id; }); };
   var spec = specKey && SPECS[specKey] || null;
-  var it = goal.interests[0] || null, interest = null;
-  if (it){
-    var L = it.courses, inF = L.filter(function(id){ return fids().indexOf(id)>=0; })[0];
-    if (inF) interest = {id:it.id, course:inF, how:"foundation", skipped:[]};
+  /* Up to two interests, placed in order; each follows the same rules, and a later one also fits around earlier ones. */
+  var interests = [];
+  goal.interests.forEach(function(it){ var interest = null;
+    var prev = interests.filter(function(x){ return x.course && x.how!=="foundation" && x.how!=="shared"; }).map(function(x){ return x.course; });
+    var L = it.courses, inF = L.filter(function(id){ return fids().indexOf(id)>=0 || prev.indexOf(id)>=0; })[0];
+    if (inF) interest = {id:it.id, course:inF, how: fids().indexOf(inF)>=0 ? "foundation" : "shared", skipped:[]};
     else {
-      var fitIdx = -1; for (var k=0;k<L.length;k++){ if (foundFeasible(fids(), L[k])){ fitIdx = k; break; } }
+      var fitIdx = -1; for (var k=0;k<L.length;k++){ if (foundFeasible(fids().concat(prev), L[k])){ fitIdx = k; break; } }
       /* Conditional swap: the interest's better courses may replace any foundation course (least central first), but only if
          another course teaches that course's defining skill closely enough (rated CLOSE_MIN+ of 3) to take its place.
          A course the specialisation requires is never replaced. */
@@ -1378,10 +1402,11 @@ function planFor(goal, specKey){
       for (var k2=0;k2<lim && !swap;k2++){ var cand = L[k2];
         for (var j=F.length-1;j>=0 && !swap;j--){ var fj = F[j];
           if (spec && spec.mandatory.indexOf(fj.id)>=0) continue;
+          if (interests.some(function(x){ return x.course===fj.id; })) continue; /* it already covers an earlier interest */
           var base2 = F.filter(function(x,q){ return q!==j; }).map(function(x){ return x.id; });
-          if (!foundFeasible(base2, cand)) continue;
+          if (!foundFeasible(base2.concat(prev), cand)) continue;
           var skill = fj.skill || DK[CBY[fj.id].vec.indexOf(maxOf(CBY[fj.id].vec))];
-          var reps = COURSES.filter(function(c){ return c.id!==fj.id && c.id!==cand && (c.v[skill]||0) >= (j===0 ? CLOSE_MIN_FIRST : CLOSE_MIN) && ((OVL[c.id+"|"+fj.id]||{}).w||0) >= CLOSE_OVL && foundFeasible(base2.concat([cand]), c.id); })
+          var reps = COURSES.filter(function(c){ return c.id!==fj.id && c.id!==cand && (c.v[skill]||0) >= (j===0 ? CLOSE_MIN_FIRST : CLOSE_MIN) && ((OVL[c.id+"|"+fj.id]||{}).w||0) >= CLOSE_OVL && foundFeasible(base2.concat(prev, [cand]), c.id); })
             .filter(function(c){ return !spec || qualifies(spec, base2.concat([cand, c.id])); })
             .sort(function(a,b){ return ((b.v[skill]||0)-(a.v[skill]||0)) || (relevanceTo(goal, b)-relevanceTo(goal, a)); });
           if (reps.length) swap = {course:cand, k:k2, slot:j, out:fj.id, rep:reps[0].id, skill:skill};
@@ -1393,7 +1418,7 @@ function planFor(goal, specKey){
             var covBy = base2.filter(function(x){ return (CBY[x].v[skill]||0) >= thr && ((OVL[x+"|"+fj.id]||{}).w||0) >= CLOSE_OVL; })[0];
             if (covBy){ var defs = (ROLE_DEF[role.id]||[]).filter(function(x){ return x.charAt(0)!=="@"; });
               var pool2 = spec ? spec.courses : COURSES.map(function(c){ return c.id; });
-              var fill = pool2.filter(function(id){ return id!==fj.id && id!==cand && base2.indexOf(id)<0 && foundFeasible(base2.concat([cand]), id) && (!spec || qualifies(spec, base2.concat([cand, id]))); })
+              var fill = pool2.filter(function(id){ return id!==fj.id && id!==cand && base2.indexOf(id)<0 && foundFeasible(base2.concat(prev, [cand]), id) && (!spec || qualifies(spec, base2.concat([cand, id]))); })
                 .map(function(id){ return {id:id, s:defs.reduce(function(a2,k){ return a2+Math.pow((CBY[id].v[k]||0)/3,2); },0)}; }).sort(function(a2,b2){ return b2.s-a2.s; })[0];
               if (fill) swap = {course:cand, k:k2, slot:j, out:fj.id, rep:fill.id, skill:skill, coveredBy:covBy};
             }
@@ -1404,15 +1429,21 @@ function planFor(goal, specKey){
       else if (fitIdx>=0) interest = {id:it.id, course:L[fitIdx], how: fitIdx===0 ? "best" : "next", skipped:L.slice(0, fitIdx)};
       else interest = {id:it.id, course:null, how:"none", skipped:L.slice()};
     }
-  }
-  var fixed = fids().concat(interest && interest.course && interest.how!=="foundation" ? [interest.course] : []);
+    interests.push(interest);
+  });
+  var interest = interests[0] || null;
+  var fixed = fids().concat(interests.filter(function(x){ return x.course && x.how!=="foundation" && x.how!=="shared"; }).map(function(x){ return x.course; }));
   /* Market: try every valid completion of the plan; keep the one that adds most of what postings ask for. Courses on the role's
      course list come first: a course from outside it is a bucket filler, used only when the bucket rules leave no role course. */
   var relCache = {}; COURSES.forEach(function(c){ relCache[c.id] = relevanceTo({role:role, interests:[], G:goal.G}, c); });
   /* A specialisation course counts as role-relevant here only while the specialisation still needs it (the foundation usually
      completes it), so market courses must otherwise be on the role's list or relevant to its postings. */
   var specDone = !spec || qualifies(spec, fixed);
-  var onRole = function(id){ return role.major.indexOf(id)>=0 || (spec && !specDone && spec.courses.indexOf(id)>=0) || relCache[id] >= FILL_REL_MIN; };
+  var pv0 = postingVec(role);
+  /* Off the role's list, a course counts only if it teaches in depth (rated 2+) a skill the role's postings ask for: touching a
+     skill (e.g. Cyber Security's fraud-detection examples as "classic ML") is not enough. */
+  var teachesAsked = function(id){ var v = CBY[id].vec; for (var i=0;i<ND;i++) if (v[i] >= 2 && pv0[i] > 0) return true; return false; };
+  var onRole = function(id){ return role.major.indexOf(id)>=0 || (spec && !specDone && spec.courses.indexOf(id)>=0) || (relCache[id] >= FILL_REL_MIN && teachesAsked(id)); };
   var pv = postingVec(role), best = null, demandOn = goal.demand !== false, lowM = goal.maths === "low";
   /* Light maths: maths-heavy courses (rated MATHS_HEAVY+: Learning Theory, Quantum ML, PGM) never take a job-market slot
      (unless the bucket rules leave no other way to complete the plan). */
@@ -1434,30 +1465,30 @@ function planFor(goal, specKey){
   var order = []; best.mk.forEach(function(id){ order.push(id); });
   order.forEach(function(id){ var others = plan.s2.concat(plan.s3).filter(function(x){ return x!==id; }), w = marketWhy(role, id, others);
     if (!onRole(id)) fillers.push(id); why[id] = w; });
-  return {plan:plan, found:F, interest:interest, market:best.mk.filter(function(id){ return fillers.indexOf(id)<0; }), fillers:fillers, marketWhy:why, role:role, spec:spec, marketVal:best.val};
+  return {plan:plan, found:F, interest:interest, interests:interests, market:best.mk.filter(function(id){ return fillers.indexOf(id)<0; }), fillers:fillers, marketWhy:why, role:role, spec:spec, marketVal:best.val};
 }
 
 /* A score for any plan (edited plans, swaps, other roles), on the same three parts: foundation, interest, job market. */
 function makeScorer(goal, opts, P){
   var role = goal.planRole, spec = opts && opts.spec && SPECS[opts.spec] || null, pv = postingVec(role), F = P.found.map(function(x){ return x.id; });
-  var iSet = goal.interests[0] ? goal.interests[0].courses : null, demandOn = goal.demand !== false, lowM = goal.maths==="low";
+  var iSets = goal.interests.map(function(it){ return it.courses; }), demandOn = goal.demand !== false, lowM = goal.maths==="low";
   var rel = {}; COURSES.forEach(function(c){ rel[c.id] = relevanceTo(goal, c); });
   function parts(s2, s3){ var ids = s2.concat(s3), p = {foundation:0, interest:0, market:0, demand:0, overlap:0, maths:0};
     F.forEach(function(f){ if (ids.indexOf(f)>=0) p.foundation += 3; });
-    if (iSet){ var m = 0; iSet.forEach(function(c,k){ if (ids.indexOf(c)>=0) m = Math.max(m, 1-0.1*k); }); p.interest = 2*m; }
+    iSets.forEach(function(iSet){ var m = 0; iSet.forEach(function(c,k){ if (ids.indexOf(c)>=0) m = Math.max(m, 1-0.1*k); }); p.interest += 2*m; });
     p.market = postingCover(pv, ids); ids.forEach(function(id){ if (F.indexOf(id)<0) p.market += MKT_REL_W*relevanceTo({role:role, interests:[], G:goal.G}, CBY[id]); });
     ids.forEach(function(id){ var c = CBY[id]; if (F.indexOf(id)<0){ if (demandOn) p.demand += MKT_DEMAND_W*(c.meta.demand-3); p.maths -= MKT_MATHS_W*(lowM ? Math.max(0,c.mathy-1) : Math.max(0,c.mathy-2)); } });
     p.overlap = -MKT_OVL_W*overlapPairs(ids).reduce(function(s,q){ return s+q.w; },0);
     return p; }
   function score(s2, s3){ var p = parts(s2, s3); return p.foundation+p.interest+p.market+p.demand+p.overlap+p.maths; }
   function slotOf(id){
-    var f = P.found.filter(function(x){ return x.id===id; })[0], isI = P.interest && P.interest.course===id;
+    var f = P.found.filter(function(x){ return x.id===id; })[0], isI = (P.interests||[]).some(function(x){ return x.course===id; });
     if (f) return isI ? "foundint" : f.why==="spec" && !(role.major.indexOf(id)>=0) ? "spec" : "found";
     if (isI) return "interest";
     if (P.market.indexOf(id)>=0) return "market";
     if (P.fillers.indexOf(id)>=0) return "filler";
     /* Edited plans: classify by what the course does for this student. */
-    if (iSet && iSet.indexOf(id)>=0) return "interest";
+    if (iSets.some(function(x){ return x.indexOf(id)>=0; })) return "interest";
     return role.major.indexOf(id)>=0 ? "market" : "filler";
   }
   return {spec:spec, score:score, parts:parts, slotOf:slotOf, rel:rel, hasMajor:true, found:F};
@@ -1472,7 +1503,7 @@ function recommend(st){
   goal.core = {}; P.found.forEach(function(f){ goal.core[f.id] = 1; });
   var best = sc.score(P.plan.s2, P.plan.s3);
   var pv = planVector(P.plan.s2.concat(P.plan.s3)), path = goal.role || goal.planRole;
-  return {goal:goal, opts:opts, plan:P.plan, P:P, bestScore:best, specBest:best, scorer:sc, path:path, found:P.found, interest:P.interest, market:P.market, fillers:P.fillers, marketWhy:P.marketWhy};
+  return {goal:goal, opts:opts, plan:P.plan, P:P, bestScore:best, specBest:best, scorer:sc, path:path, found:P.found, interest:P.interest, interests:P.interests, market:P.market, fillers:P.fillers, marketWhy:P.marketWhy};
 }
 
 function relevanceTo(goal, c){
@@ -1735,7 +1766,7 @@ function isFiller(id){ if (isCore(id)) return false; var r = courseReasons(id, r
 function skl(a){ var x = SKILL_SHORT[a]; return /^[A-Z][a-z]/.test(x) ? x.charAt(0).toLowerCase()+x.slice(1) : x; }
 function topicsOf(a, b){ return (OVL[a+"|"+b]||{}).topics || ""; }
 function slotReason(id){
-  var g = rec.goal, R = rec.P, rl = g.planRole, sl = slotOf(id), it = g.interests[0], f = R.found.filter(function(x){ return x.id===id; })[0], I = R.interest, w = rec.marketWhy[id];
+  var g = rec.goal, R = rec.P, rl = g.planRole, sl = slotOf(id), f = R.found.filter(function(x){ return x.id===id; })[0], I = (R.interests||[]).filter(function(x){ return x.course===id; })[0], it = I ? IBY[I.id] : g.interests[0], w = rec.marketWhy[id];
   var t = "";
   if (f){
     if (f.why==="skill") t = R.found.filter(function(x){ return x.skill===f.skill; }).length>1 ? "teaches "+DIMS[f.skill].label+"; the role needs two courses on it" : "teaches "+DIMS[f.skill].label+", a defining skill of the role";
@@ -1748,7 +1779,7 @@ function slotReason(id){
     return t;
   }
   if (sl==="interest"){
-    if (!I || I.course!==id) return "on the course list for your "+(it ? it.label : "")+" interest";
+    if (!I){ var own = g.interests.filter(function(x){ return x.courses.indexOf(id)>=0; })[0]; return "on the course list for your "+(own ? own.label : "")+" interest"; }
     return I.how==="next" ? "best course for "+it.label+" that fits around your foundation" : "best-matching course for "+it.label;
   }
   if (sl==="market"){
@@ -1762,31 +1793,32 @@ function slotReason(id){
 }
 var SLOT_HEAD = {found:"Foundation", foundint:"Foundation", spec:"Foundation", interest:"Your interest", market:"Job market", filler:"Bucket filler"};
 function story(){
-  var g = rec.goal, P = current(), out = [], R = rec.P, rl = g.planRole, ids = P.s2.concat(P.s3), it = g.interests[0];
+  var g = rec.goal, P = current(), out = [], R = rec.P, rl = g.planRole, ids = P.s2.concat(P.s3), its = g.interests;
   var bold = function(x){ return "<strong>"+esc(x)+"</strong>"; };
   var head = g.role ? "Target role: "+bold(rl.name) : "No target role yet, so this plan is for the closest role, "+bold(rl.name)+". Pick a role above for a sharper plan";
-  if (it) head += " · Interest: "+bold(it.label);
+  if (its.length) head += " · Interest"+(its.length>1?"s":"")+": "+joinList(its.map(function(x){ return bold(x.label); }));
   if (R.spec) head += " · Specialisation: "+bold(R.spec.label);
   out.push("<p>"+head+".</p>");
   if (custom) out.push('<p class="muted">You\'ve edited this plan. <b>Back to recommended</b> restores ours.</p>');
-  var groups = [["Foundation", "what the role is built on, from course content", ["found","foundint","spec"]], ["Your interest", "a starter course", ["interest"]],
+  var groups = [["Foundation", "what the role is built on, from course content", ["found","foundint","spec"]], [its.length>1 ? "Your interests" : "Your interest", its.length>1 ? "a starter course each" : "a starter course", ["interest"]],
                 ["Job market", "from "+rl.name+" job postings", ["market"]], ["Bucket filler", "", ["filler"]]];
   groups.forEach(function(gr){ var cs = ids.filter(function(id){ return gr[2].indexOf(slotOf(id))>=0; }); if (!cs.length) return;
     out.push('<div class="why-group"><h4>'+gr[0]+(gr[1] ? ' <span>'+esc(gr[1])+'</span>' : '')+'</h4><ul>'+cs.map(function(id){ return "<li>"+bold(CBY[id].short)+": "+esc(slotReason(id))+".</li>"; }).join("")+'</ul></div>'); });
   var notes = [];
-  if (!custom && R.interest){ var I = R.interest, sk = I.skipped || [];
-    var clashWhy = function(id){ var c = CBY[id], same = R.found.map(function(f){ return f.id; }).filter(function(x){ return CBY[x].sem===c.sem && CBY[x].bucket===c.bucket; })[0];
-      return same ? c.short+" shares a bucket with "+CBY[same].short : c.short+" needs a Semester 2 slot, and both hold foundation courses"; };
+  if (!custom) (R.interests||[]).forEach(function(I, qi){ var it = IBY[I.id], sk = I.skipped || [], prev = R.interests.slice(0, qi).map(function(x){ return x.course; }).filter(Boolean);
+    var clashWhy = function(id){ var c = CBY[id], held = R.found.map(function(f){ return f.id; }).concat(prev), same = held.filter(function(x){ return CBY[x].sem===c.sem && CBY[x].bucket===c.bucket; })[0];
+      return same ? c.short+" shares a bucket with "+CBY[same].short : c.short+" needs a Semester "+c.sem+" slot, and they are all taken"; };
     if (I.how==="swap"){ var sw = I.swap;
       notes.push(sw.coveredBy ? CBY[I.course].short+" took "+CBY[sw.out].short+"'s slot. "+CBY[sw.coveredBy].short+" already covers its skill (shared content: "+topicsOf(sw.coveredBy, sw.out)+")."
                               : CBY[I.course].short+" took "+CBY[sw.out].short+"'s slot; "+CBY[sw.rep].short+" stands in for it in your foundation."); }
-    else if (I.how==="next") notes.push(joinList(sk.map(clashWhy))+", and no foundation course could make way, so your interest gets "+CBY[I.course].short+".");
-    else if (I.how==="none") notes.push("No "+it.label+" course fits: "+joinList(sk.map(clashWhy))+", and no foundation course could make way.");
-    else if (I.how==="foundation") notes.push("Your foundation already covers "+it.label+", so that slot went to the job market.");
-  }
+    else if (I.how==="next") notes.push(joinList(sk.map(clashWhy))+", and no foundation course could make way, so your "+it.label+" interest gets "+CBY[I.course].short+".");
+    else if (I.how==="none") notes.push("No "+it.label+" course fits: "+joinList(sk.map(clashWhy))+", and no foundation course could make way. Its slot went to the job market.");
+    else if (I.how==="foundation") notes.push("Your foundation already covers "+it.label+" ("+CBY[I.course].short+"), so that slot went to the job market.");
+    else if (I.how==="shared") notes.push(CBY[I.course].short+" covers both your interests, so the spare slot went to the job market.");
+  });
   var ovs = overlapPairs(ids).filter(function(o){ return o.w>=0.75; });
   if (ovs.length) notes.push("Some content repeats: "+ovs.map(function(o){ return CBY[o.a].short+" and "+CBY[o.b].short+" ("+o.topics+")"; }).join("; ")+".");
-  if (R.spec && !custom){ var swOut = R.interest && R.interest.swap ? R.interest.swap.out : null, own = rl.core.filter(function(id){ return ids.indexOf(id)<0 && id!==swOut; });
+  if (R.spec && !custom){ var swOuts = (R.interests||[]).filter(function(x){ return x.swap; }).map(function(x){ return x.swap.out; }), own = rl.core.filter(function(id){ return ids.indexOf(id)<0 && swOuts.indexOf(id)<0; });
     if (own.length) notes.push("Your "+R.spec.label+" specialisation fills the foundation, so "+joinList(own.map(function(id){ return CBY[id].short; }))+", "+(own.length>1?"part":"part")+" of the role's own foundation, "+(own.length>1?"are":"is")+" not in the plan."); }
   var ev = JD_EVIDENCE[rl.id];
   if (ev){ var gap = Object.keys(ev.pct).filter(function(a){ return ev.pct[a]>=50 && !COURSES.some(function(c){ return c.vec[DK.indexOf(a)]>=2; }); });
@@ -1969,7 +2001,8 @@ function leftOut(P){
     var reason = same ? 'Same bucket as <b>'+esc(CBY[same].short)+'</b>, and you can take only one per bucket.'
                       : 'Its bucket is unused. Adding it means dropping <b>'+esc(CBY[best.out].short)+'</b>.';
     var newOv = overlapPairs(swapPlan(P, c.id, best.out)[0].concat(swapPlan(P, c.id, best.out)[1])).filter(function(o){ return (o.a===c.id||o.b===c.id) && o.w>=0.5; });
-    if (newOv.length) reason += ' It would also repeat topics from <b>'+esc(CBY[newOv[0].a===c.id?newOv[0].b:newOv[0].a].short)+'</b> ('+esc(newOv[0].topics)+').';
+    newOv.sort(function(x,y){ return y.w-x.w; });
+    if (newOv.length) reason += ' It would also repeat topics from '+newOv.map(function(o){ return '<b>'+esc(CBY[o.a===c.id?o.b:o.a].short)+'</b> ('+esc(o.topics)+')'; }).join(' and ')+'.';
     var o2 = CBY[best.out];
     if (o2.meta.demand > c.meta.demand || o2.meta.modern > c.meta.modern) reason += ' '+esc(o2.short)+' also rates higher on '+[o2.meta.demand > c.meta.demand ? 'job demand' : null, o2.meta.modern > c.meta.modern ? 'modern content' : null].filter(Boolean).join(' and ')+'.';
     var effect = best.broken ? 'This swap would break your '+esc(rec.scorer.spec.label)+' specialisation.' :
