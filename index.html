@@ -548,7 +548,7 @@ footer{padding-block:28px 40px; color:var(--ink-3); font-size:.85rem; border-top
             <li>For your batch, ML System Optimization and Multimodal IR are taken in Semester 2 only, so they don't appear in Semester 3.</li>
             <li>When you aim for a specialisation, only plans that qualify are recommended. ML System Optimization and Multimodal IR are counted toward Deep Learning and Audio &amp; Vision, because the Semester 3 table lists them there, even though your batch takes them in Semester 2. Video Analysis is not listed in any category, so it isn't counted.</li>
             <li>For Audio &amp; Vision, both Computer Vision (marked mandatory on the Semester 2 slide) and Audio Analysis (#) are treated as required.</li>
-            <li>Architecting AI Systems has no handout. Its description comes from its title only.</li>
+            <li>Architecting AI Systems (July 2026) and ML System Optimization (Feb 2026) use the newest handouts shared by the team. Their overlaps with other courses are judged from those handouts, as the earlier keyword comparison did not include them.</li>
             <li>The Video Analysis handout is an older "Video Analytics" version with a different course code (ZG531 vs ZG540).</li>
             <li>Each course's topic profile was cross-checked against a keyword count of its full handout text (modules and session plans).</li>
             <li>Each role's three defining skills, and so its foundation courses, are our reading of what the role does, checked against the course handouts. They are not an institute rule. Multimodal IR is named directly as a Multimodal AI Engineer's foundation, because no single skill area captures multimodal retrieval.</li>
@@ -634,18 +634,19 @@ var COURSES = [
   tools:["OpenCV-style labs","OpenVINO","NVIDIA Jetson / DeepStream"], outcome:"build image classification, detection and tracking applications",
   v:{vision:3, dl:1.5, edge:0.5, classic:0.5, sys:0.3}},
  {id:"aas", sem:2, bucket:"B2", code:"AIMLCZG509", units:4, name:"Architecting AI Systems", short:"Architecting AI Systems",
-  fam:"prod", risk:0.25,
-  what:"From its title, a course on designing end-to-end AI systems: how the components fit together and the trade-offs involved. No handout was provided, so the exact syllabus is unknown.",
-  topics:["Syllabus not available in the documents"], tools:[], outcome:"reason about how AI systems are put together end to end",
-  note:"No handout was provided. This description is inferred from the title only, so check the syllabus before choosing it.",
-  v:{arch:3, apps:1, ops:1, sys:0.5}},
+  fam:"prod",
+  what:"How to design AI systems that work in production: the AI development lifecycle and system components; batch, streaming and online designs; model serving (REST, gRPC, edge, A/B and shadow testing); agentic AI (ReAct, MCP, A2A, multi-agent systems); scaling, performance and resilience; reference designs for RAG, recommenders and vision; governance and security.",
+  topics:["AI development lifecycle and system components","Batch, streaming and online architectures","Model serving: REST/gRPC, edge, A/B and shadow testing","Agentic AI: ReAct, MCP, A2A, multi-agent design","Scalability: distributed training and inference","Performance: caching, batching, quantisation, accelerators","Resilience, monitoring and observability","Blueprints: RAG, recommenders, vision and multimodal","Governance, security and responsible AI"],
+  tools:["FastAPI","Docker","MLflow","LangChain / LlamaIndex","MCP SDK","FAISS / Chroma / pgvector","Prometheus / Grafana","AWS / GCP / Azure"], outcome:"design, serve and scale AI systems, including agents and RAG, with sound architecture trade-offs",
+  note:"Handout v1.0 (July 2026). Labs cover model serving, agents with MCP and a RAG system.",
+  v:{arch:3, ops:1.5, sys:1.5, apps:1.5, data:1.5, llm:1, trust:1, search:0.5}},
  {id:"mlso", sem:2, bucket:"B3", code:"AIMLCZG516", units:4, name:"ML System Optimization", short:"ML System Optimization",
   fam:"prod",
-  what:"What happens under the hood when ML runs at scale: parallel and distributed training on multi-core CPUs, GPUs and clusters, how Spark and TensorFlow scale out, federated learning, and shrinking models with compression, quantisation and pruning.",
-  topics:["Speed-up, Amdahl's law, data vs task parallelism","Parallel SGD, SVM, k-means, trees","Parameter servers, Spark and TensorFlow architecture","Distributed deep learning (all-reduce, local SGD)","Federated learning systems","Model compression, quantisation, pruning"],
-  tools:["TensorFlow","Spark","TF Lite"], outcome:"make training and inference faster and cheaper",
-  note:"The handout says it expects a basic understanding of computer systems (multi-core, GPUs, distributed systems).",
-  v:{sys:3, dl:1.2, edge:1, data:0.5, ops:0.3}},
+  what:"What happens under the hood when ML runs at scale: CPU, GPU and TPU hardware; data, model and pipeline parallelism; all-reduce, parameter servers and asynchronous training; mixed precision and gradient checkpointing; scaling laws; and making models smaller and faster with pruning, quantisation and distillation, including edge deployment and GenAI workloads.",
+  topics:["Speed-up, Amdahl's law; CPU, GPU and TPU architectures","Data, model and pipeline parallelism; gradient checkpointing, mixed precision","All-reduce variants, parameter servers, asynchronous SGD","Distributed ML with Spark, Dask and PyTorch; scaling laws","Model compression: low-rank, weight sharing, structured and unstructured pruning","Quantisation (PTQ, QAT) and knowledge distillation","Edge deployment (TF Lite, ONNX Runtime); accuracy vs latency and energy","Optimisation for generative AI"],
+  tools:["PyTorch distributed","Spark","Dask","TF Lite","ONNX Runtime"], outcome:"make training and inference faster and cheaper, from clusters down to edge devices",
+  note:"Handout v1.0 (Feb 2026). It expects a basic understanding of computer systems (multi-core, GPUs, distributed systems). Labs: Dask, BERT quantisation and pruning.",
+  v:{sys:3, dl:1.2, edge:1.5, llm:0.5, data:0.5, ops:0.3}},
  {id:"pgm", sem:2, bucket:"B3", code:"AIMLCZG526", units:4, name:"Probabilistic Graphical Models", short:"Probabilistic Graphical Models",
   fam:"models", mathy:2,
   what:"Reasoning under uncertainty with graphs of probabilities. You learn Bayesian networks and Markov networks, exact and approximate inference (belief propagation, MCMC), and how to learn a model's structure and parameters from data.",
@@ -811,7 +812,7 @@ var COURSE_META = {
  mlops:   {modern:4, mnote:"CI/CD for models, serving, monitoring and drift, edge and browser deployment", demand:5, dnote:"LinkedIn 2026 calls MLOps essential for AI roles; deployment skills (AWS, scalability, workflow) are rising fastest (AI Index 2026)"},
  cloud:   {modern:4, mnote:"Kubernetes, serverless, API-driven ML pipelines, RAG assistants on cloud AI APIs", demand:4, dnote:"AWS and scalability are among the top AI-posting skills (AI Index 2026)"},
  edge:    {modern:5, mnote:"TinyML, small language models, quantisation and distillation, edge MLOps", demand:3, dnote:"Growing area, but no separate hiring cluster in the reports we checked"},
- mlso:    {modern:3, mnote:"Distributed and federated training, quantisation and pruning; techniques still used for LLMs, taught on classic models", demand:3, dnote:"Scalability is a top skill (AI Index 2026), but this course focuses on classic systems"},
+ mlso:    {modern:4, mnote:"Pipeline parallelism, mixed precision, scaling laws, PTQ/QAT quantisation, pruning and distillation, TPUs and a GenAI session (2026 handout)", demand:3, dnote:"Scalability is a top skill (AI Index 2026); inference optimisation roles are growing but still a niche"},
  cv:      {modern:4, mnote:"YOLO detection, Segment Anything, vision transformers, deep tracking, Jetson deployment", demand:4, dnote:"Computer vision is a listed skill for both AI consultants and AI/ML researchers (LinkedIn 2026)"},
  cv3d:    {modern:5, mnote:"NeRF, Gaussian splatting, learned depth and SLAM", demand:3, dnote:"Image-recognition demand is steady, but autonomous-driving and robotics clusters lost share (AI Index 2025)"},
  cphoto:  {modern:3, mnote:"Deep-learning image pipelines (UNet) on top of mostly classical imaging and optics", demand:2, dnote:"Niche: camera and imaging industry roles"},
@@ -826,7 +827,7 @@ var COURSE_META = {
  qml:     {modern:4, mnote:"Variational quantum circuits, hybrid quantum neural networks, quantum kernels", demand:1, dnote:"Very few industry roles yet"},
  robotics:{modern:4, mnote:"Deep RL navigation, neural visual SLAM, LLM chat for robots, classic Bayes filters", demand:2, dnote:"Robotics was one of the only AI clusters to lose share in 2024 (AI Index 2025)"},
  sma:     {modern:2, mnote:"Mostly classical social-network and sentiment analytics, with some graph learning", demand:2, dnote:"Marketing analytics roles; not a growing AI cluster"},
- aas:     {modern:3, mnote:"No handout, so we can't judge how current it is", demand:3, dnote:"AI consultants and strategists are #2 on LinkedIn's 2026 rising roles, but the syllabus is unknown"}
+ aas:     {modern:5, mnote:"Agentic AI with MCP and A2A, RAG blueprints, model serving and observability (2026 handout)", demand:4, dnote:"AI consultants and strategists are #2 on LinkedIn's 2026 rising roles; AWS and scalability are top AI-posting skills (AI Index 2026)"}
 };
 var DEMAND_SOURCES = [
  {name:"Stanford AI Index 2025, Economy chapter (Lightcast job-posting data)", url:"https://hai.stanford.edu/assets/files/hai_ai-index-report-2025_chapter4_final.pdf"},
@@ -852,7 +853,12 @@ var OVERLAP = [
  ["edge","mlops",0.65,"model deployment and edge MLOps"],
  ["convai","nlpapps",0.6,"RAG, question answering and chatbots"],
  ["nlp","speech",0.6,"HMMs, Viterbi decoding and n-gram language models"],
- ["mlso","edge",0.6,"quantisation, pruning and model compression"],
+ ["mlso","edge",0.7,"quantisation, pruning, distillation and edge deployment (TF Lite, ONNX Runtime)"],
+ ["aas","convai",0.5,"agents, MCP, A2A and multi-agent design"],
+ ["aas","mlops",0.3,"model serving, A/B and shadow testing, monitoring (overview level)"],
+ ["aas","cloud",0.5,"cloud deployment, scaling and APIs"],
+ ["aas","mlso",0.35,"distributed inference, batching and quantisation"],
+ ["aas","llm",0.3,"RAG and agents"],
  ["cv","cv3d",0.6,"SIFT, RANSAC and image geometry"],
  ["va","cv3d",0.55,"motion estimation, optical flow and Kalman tracking"],
  ["edge","cloud",0.55,"IoT pipelines, APIs and deployment"],
@@ -909,7 +915,8 @@ var SYNERGY = [
  ["pgm","clt",0.5,"PGM's probabilistic thinking prepares you for learning theory"],
  ["cyber","fitml",0.5,"adversarial attacks from Cyber Security reappear in trustworthy ML"],
  ["aas","cloud",0.6,"system-architecture thinking pairs with building cloud-native AI apps"],
- ["aas","mlops",0.5,"architecture choices and MLOps go hand in hand"]
+ ["aas","mlops",0.5,"architecture choices and MLOps go hand in hand"],
+ ["aas","convai",0.5,"the agent architecture (ReAct, MCP, A2A) from Architecting AI Systems prepares you to build agents"]
 ];
 
 /* Specialisation rule (confirmed by the student body): 3 courses from the category, including the mandatory ones.
@@ -1173,7 +1180,7 @@ var SUBSKILLS = {
  sys:{tech:["Inference optimisation","Quantisation and pruning","Distillation","GPU kernels","Distributed serving"], tools:["CUDA","TensorRT","vLLM / SGLang","Triton","ONNX Runtime"]},
  ops:{tech:["CI/CD for ML","Experiment tracking","Model monitoring and drift","Model registry and deployment","LLMOps"], tools:["MLflow","Kubeflow","SageMaker / Vertex AI","Docker / Kubernetes"]},
  apps:{tech:["Backend APIs","Microservices","Cloud AI services","Full-stack integration"], tools:["FastAPI","AWS / Azure / GCP","Docker","React / TypeScript"]},
- arch:{tech:["End-to-end AI system design","Reference architectures","Requirements and trade-offs","Proof of concept to production"], tools:["AWS Bedrock","Azure OpenAI","Vertex AI","Terraform"]},
+ arch:{tech:["End-to-end AI system design and trade-offs","Reference architectures (RAG, recommenders, vision)","Serving, scaling and reliability patterns","Agent architecture (MCP, A2A)","Governance and security","Proof of concept to production"], tools:["AWS Bedrock","Azure OpenAI","Vertex AI","Terraform"]},
  edge:{tech:["On-device inference","TinyML","Model compression for NPUs","IoT pipelines"], tools:["TFLite / LiteRT","ONNX","NVIDIA Jetson","C / C++"]},
  robot:{tech:["Perception for robots","Planning and control","Reinforcement learning (Q-learning, PPO)","Imitation learning and VLA models","Simulation"], tools:["ROS / ROS2","Isaac Sim","MuJoCo / Gazebo"]},
  data:{tech:["SQL and data modelling","ETL and streaming","Feature stores","Data quality"], tools:["Spark","Airflow","Kafka","Snowflake / Databricks"]},
@@ -1367,7 +1374,15 @@ PATHS.forEach(function(p){ p.core = foundation(p.id, null).map(function(x){ retu
 /* ---------- 3. Job market ---------- */
 /* The role's job-posting profile: share of postings asking for each skill, counting only skills in at least MKT_MIN_PCT% of
    postings. "Theory" is halved except for research roles: in postings it mostly means a PhD or publications, not a course. */
-var MKT_MIN_PCT = 25, MKT_REL_W = 0.1, OFF_ROLE_PEN = 0.5;
+var MKT_MIN_PCT = 25, MKT_REL_W = 0.1, OFF_ROLE_PEN = 0.5, EMPTY_PEN = 0.3;
+/* An "empty" market pick: a course that, in this plan, adds nothing the role's postings ask for (no posting skill it teaches in
+   depth, rated 2+, beyond what the plan's other courses already teach). It costs EMPTY_PEN, so a course that adds a posting skill
+   wins even with some overlap; when every option is empty, the least-overlapping relevant one is chosen as before. */
+function addsPosting(pv, id, ids){ var v = CBY[id].vec;
+  for (var i=0;i<ND;i++){ if (v[i] < 2 || !(pv[i] > 0)) continue; var dv = depthOf(v[i]), top = 0;
+    for (var k=0;k<ids.length;k++){ var o = ids[k]; if (o!==id){ var x = depthOf(CBY[o].vec[i]); if (x>top) top = x; } }
+    if (dv > top + 1e-9) return true; }
+  return false; }
 function postingVec(role){ var v = new Float64Array(ND), ev = role && JD_EVIDENCE[role.id];
   if (ev) DK.forEach(function(d,i){ var x = ev.pct[d]||0; if (x >= MKT_MIN_PCT) v[i] = x/100*(d==="theory" && role.id!=="research" && role.id!=="qml" ? 0.5 : 1); }); return v; }
 /* How much a course counts toward a skill: full depth for what it teaches in depth (rated 2+), a quarter for what it only touches. */
@@ -1388,11 +1403,20 @@ function planFor(goal, specKey){
   var role = goal.planRole, F = foundation(role.id, specKey), fids = function(){ return F.map(function(x){ return x.id; }); };
   var spec = specKey && SPECS[specKey] || null;
   /* Up to two interests, placed in order; each follows the same rules, and a later one also fits around earlier ones. */
-  var interests = [];
+  var interests = [], keepMk = [];
+  /* The plan without interests: a course the job market already picks doesn't make the interest count (see below). */
+  var baseMk = goal.interests.length ? (function(){ var g0 = Object.assign({}, goal, {interests:[]}), b = planFor(g0, specKey); return b ? b.market : []; })() : [];
   goal.interests.forEach(function(it){ var interest = null;
-    var prev = interests.filter(function(x){ return x.course && x.how!=="foundation" && x.how!=="shared"; }).map(function(x){ return x.course; });
+    var prev = interests.filter(function(x){ return x.course && x.how!=="foundation" && x.how!=="shared"; }).map(function(x){ return x.course; }).concat(keepMk);
     var L = it.courses, inF = L.filter(function(id){ return fids().indexOf(id)>=0 || prev.indexOf(id)>=0; })[0];
-    if (inF) interest = {id:it.id, course:inF, how: fids().indexOf(inF)>=0 ? "foundation" : "shared", skipped:[]};
+    if (inF && fids().indexOf(inF)>=0){
+      /* The core already teaches this interest: it still gets its own course, the next one on its list that fits
+         (the plan rules, including "no near-duplicate pair", apply as usual). Only if none fits is the core course its course. */
+      var taken = fids().concat(prev), skp = [], ex = null;
+      for (var q=0;q<L.length;q++){ if (taken.indexOf(L[q])>=0) continue; if (foundFeasible(taken, L[q])){ ex = L[q]; break; } skp.push(L[q]); }
+      interest = ex ? {id:it.id, course:ex, how:"extra", coveredBy:inF, skipped:skp} : {id:it.id, course:inF, how:"foundation", skipped:[]};
+    }
+    else if (inF) interest = {id:it.id, course:inF, how:"shared", skipped:[]};
     else {
       var fitIdx = -1; for (var k=0;k<L.length;k++){ if (foundFeasible(fids().concat(prev), L[k])){ fitIdx = k; break; } }
       /* Conditional swap: the interest's better courses may replace any foundation course (least central first), but only if
@@ -1402,7 +1426,7 @@ function planFor(goal, specKey){
       for (var k2=0;k2<lim && !swap;k2++){ var cand = L[k2];
         for (var j=F.length-1;j>=0 && !swap;j--){ var fj = F[j];
           if (spec && spec.mandatory.indexOf(fj.id)>=0) continue;
-          if (interests.some(function(x){ return x.course===fj.id; })) continue; /* it already covers an earlier interest */
+          if (interests.some(function(x){ return x.course===fj.id || x.coveredBy===fj.id; })) continue; /* it already covers an earlier interest */
           var base2 = F.filter(function(x,q){ return q!==j; }).map(function(x){ return x.id; });
           if (!foundFeasible(base2.concat(prev), cand)) continue;
           var skill = fj.skill || DK[CBY[fj.id].vec.indexOf(maxOf(CBY[fj.id].vec))];
@@ -1426,13 +1450,21 @@ function planFor(goal, specKey){
         }
       }
       if (swap){ F[swap.slot] = swap.coveredBy ? {id:swap.rep, skill:null, why:"refill", replaces:swap.out, coveredBy:swap.coveredBy} : {id:swap.rep, skill:swap.skill, why:"replacement", replaces:swap.out}; interest = {id:it.id, course:swap.course, how:"swap", swap:swap, skipped:L.slice(0, swap.k)}; }
+      else if (fitIdx>=0 && baseMk.indexOf(L[fitIdx])>=0){
+        /* The job market would pick this course anyway, so it stays as a market pick and the interest gets the next course
+           on its list that fits around it. If none fits, the interest's course is simply that one. */
+        var held = fids().concat(prev, [L[fitIdx]]), skp2 = [], ex2 = null;
+        for (var q2=fitIdx+1;q2<L.length;q2++){ if (held.indexOf(L[q2])>=0) continue; if (foundFeasible(held, L[q2])){ ex2 = L[q2]; break; } skp2.push(L[q2]); }
+        if (ex2){ keepMk.push(L[fitIdx]); interest = {id:it.id, course:ex2, how:"extra", coveredBy:L[fitIdx], byMarket:true, skipped:skp2}; }
+        else interest = {id:it.id, course:L[fitIdx], how: fitIdx===0 ? "best" : "next", skipped:L.slice(0, fitIdx)};
+      }
       else if (fitIdx>=0) interest = {id:it.id, course:L[fitIdx], how: fitIdx===0 ? "best" : "next", skipped:L.slice(0, fitIdx)};
       else interest = {id:it.id, course:null, how:"none", skipped:L.slice()};
     }
     interests.push(interest);
   });
   var interest = interests[0] || null;
-  var fixed = fids().concat(interests.filter(function(x){ return x.course && x.how!=="foundation" && x.how!=="shared"; }).map(function(x){ return x.course; }));
+  var fixed = fids().concat(interests.filter(function(x){ return x.course && x.how!=="foundation" && x.how!=="shared"; }).map(function(x){ return x.course; }).concat(keepMk));
   /* Market: try every valid completion of the plan; keep the one that adds most of what postings ask for. Courses on the role's
      course list come first: a course from outside it is a bucket filler, used only when the bucket rules leave no role course. */
   var relCache = {}; COURSES.forEach(function(c){ relCache[c.id] = relevanceTo({role:role, interests:[], G:goal.G}, c); });
@@ -1454,7 +1486,7 @@ function planFor(goal, specKey){
       if (spec && !qualifies(spec, ids)) continue;
       if (noHeavy && mk.some(function(id){ return CBY[id].mathy >= MATHS_HEAVY; })) continue;
       var v = postingCover(pv, ids), d = 0, m = 0, mm = 0;
-      mk.forEach(function(id){ var c = CBY[id]; d += (c.meta.demand-3); v += MKT_REL_W*relCache[id] - (onRole(id) ? 0 : OFF_ROLE_PEN); m += c.meta.modern; mm += lowM ? Math.max(0, c.mathy-1) : Math.max(0, c.mathy-2); });
+      mk.forEach(function(id){ var c = CBY[id]; d += (c.meta.demand-3); v += MKT_REL_W*relCache[id] - (!onRole(id) ? OFF_ROLE_PEN + 2*EMPTY_PEN : spec && !specDone && spec.courses.indexOf(id)>=0 || addsPosting(pv, id, ids) ? 0 : EMPTY_PEN); m += c.meta.modern; mm += lowM ? Math.max(0, c.mathy-1) : Math.max(0, c.mathy-2); });
       var ov = overlapPairs(ids).filter(function(p){ return mk.indexOf(p.a)>=0 || mk.indexOf(p.b)>=0; }).reduce(function(s,p){ return s+p.w; },0);
       var val = v + (demandOn ? MKT_DEMAND_W*d : 0) - MKT_OVL_W*ov - MKT_MATHS_W*mm;
       if (!best || val > best.val + 1e-9 || (Math.abs(val-best.val)<=1e-9 && m > best.m)) best = {s2:A, s3:B, val:val, m:m, mk:mk};
@@ -1462,10 +1494,10 @@ function planFor(goal, specKey){
   }
   if (!best) return null;
   var plan = {s2:best.s2.slice(), s3:best.s3.slice()}, why = {}, fillers = [];
-  var order = []; best.mk.forEach(function(id){ order.push(id); });
+  var order = keepMk.slice(); best.mk.forEach(function(id){ order.push(id); });
   order.forEach(function(id){ var others = plan.s2.concat(plan.s3).filter(function(x){ return x!==id; }), w = marketWhy(role, id, others);
     if (!onRole(id)) fillers.push(id); why[id] = w; });
-  return {plan:plan, found:F, interest:interest, interests:interests, market:best.mk.filter(function(id){ return fillers.indexOf(id)<0; }), fillers:fillers, marketWhy:why, role:role, spec:spec, marketVal:best.val};
+  return {plan:plan, found:F, interest:interest, interests:interests, market:keepMk.concat(best.mk).filter(function(id){ return fillers.indexOf(id)<0; }), fillers:fillers, marketWhy:why, role:role, spec:spec, marketVal:best.val};
 }
 
 /* A score for any plan (edited plans, swaps, other roles), on the same three parts: foundation, interest, job market. */
@@ -1475,8 +1507,9 @@ function makeScorer(goal, opts, P){
   var rel = {}; COURSES.forEach(function(c){ rel[c.id] = relevanceTo(goal, c); });
   function parts(s2, s3){ var ids = s2.concat(s3), p = {foundation:0, interest:0, market:0, demand:0, overlap:0, maths:0};
     F.forEach(function(f){ if (ids.indexOf(f)>=0) p.foundation += 3; });
-    iSets.forEach(function(iSet){ var m = 0; iSet.forEach(function(c,k){ if (ids.indexOf(c)>=0) m = Math.max(m, 1-0.1*k); }); p.interest += 2*m; });
-    p.market = postingCover(pv, ids); ids.forEach(function(id){ if (F.indexOf(id)<0) p.market += MKT_REL_W*relevanceTo({role:role, interests:[], G:goal.G}, CBY[id]); });
+    /* A foundation course on the interest's list counts for less than a course of its own (the interest gets its own course when one fits). */
+    iSets.forEach(function(iSet){ var m = 0; iSet.forEach(function(c,k){ if (ids.indexOf(c)>=0) m = Math.max(m, (1-0.1*k)*(F.indexOf(c)>=0 ? 0.7 : 1)); }); p.interest += 2*m; });
+    p.market = postingCover(pv, ids); ids.forEach(function(id){ if (F.indexOf(id)<0){ p.market += MKT_REL_W*relevanceTo({role:role, interests:[], G:goal.G}, CBY[id]); if (!iSets.some(function(x){ return x.indexOf(id)>=0; }) && !addsPosting(pv, id, ids)) p.market -= EMPTY_PEN; } });
     ids.forEach(function(id){ var c = CBY[id]; if (F.indexOf(id)<0){ if (demandOn) p.demand += MKT_DEMAND_W*(c.meta.demand-3); p.maths -= MKT_MATHS_W*(lowM ? Math.max(0,c.mathy-1) : Math.max(0,c.mathy-2)); } });
     p.overlap = -MKT_OVL_W*overlapPairs(ids).reduce(function(s,q){ return s+q.w; },0);
     return p; }
@@ -1776,10 +1809,12 @@ function slotReason(id){
     else if (f.why==="refill") t = (R.spec ? R.spec.label+" course" : "course")+" closest to the role, in the slot "+CBY[f.replaces].short+" left";
     else t = "the closest remaining course to the role";
     if (I && I.course===id) t += "; also covers your "+it.label+" interest";
+    (R.interests||[]).forEach(function(x){ if (x.coveredBy===id) t += "; also covers your "+IBY[x.id].label+" interest"; });
     return t;
   }
   if (sl==="interest"){
     if (!I){ var own = g.interests.filter(function(x){ return x.courses.indexOf(id)>=0; })[0]; return "on the course list for your "+(own ? own.label : "")+" interest"; }
+    if (I.how==="extra") return "next course on the "+it.label+" list; "+CBY[I.coveredBy].short+" is already in your plan "+(I.byMarket ? "from job postings" : "as a foundation course");
     return I.how==="next" ? "best course for "+it.label+" that fits around your foundation" : "best-matching course for "+it.label;
   }
   if (sl==="market"){
@@ -1813,7 +1848,8 @@ function story(){
                               : CBY[I.course].short+" took "+CBY[sw.out].short+"'s slot; "+CBY[sw.rep].short+" stands in for it in your foundation."); }
     else if (I.how==="next") notes.push(joinList(sk.map(clashWhy))+", and no foundation course could make way, so your "+it.label+" interest gets "+CBY[I.course].short+".");
     else if (I.how==="none") notes.push("No "+it.label+" course fits: "+joinList(sk.map(clashWhy))+", and no foundation course could make way. Its slot went to the job market.");
-    else if (I.how==="foundation") notes.push("Your foundation already covers "+it.label+" ("+CBY[I.course].short+"), so that slot went to the job market.");
+    else if (I.how==="extra") notes.push((I.byMarket ? "Job postings already bring "+CBY[I.coveredBy].short+" into your plan" : "Your foundation already covers "+it.label+" ("+CBY[I.coveredBy].short+")")+", so the interest gets the next course on its list, "+CBY[I.course].short+(sk.length ? " ("+joinList(sk.map(function(id){ var o = overlapPairs([id].concat(R.found.map(function(f){ return f.id; }), [I.coveredBy], prev)).filter(function(q){ return q.w>=0.9; })[0]; return o ? CBY[id].short+" would mostly repeat "+CBY[o.a===id?o.b:o.a].short : clashWhy(id); }))+")" : "")+".");
+    else if (I.how==="foundation") notes.push("Your foundation already covers "+it.label+" ("+CBY[I.course].short+") and no other course on its list fits, so that slot went to the job market.");
     else if (I.how==="shared") notes.push(CBY[I.course].short+" covers both your interests, so the spare slot went to the job market.");
   });
   var ovs = overlapPairs(ids).filter(function(o){ return o.w>=0.75; });
